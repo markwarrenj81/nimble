@@ -10,14 +10,14 @@ Future Developments Includes:
 
 • To work with additional trading pairs, currently its made to work only for XRPUSDT trading pairs.
 
-To use this bot you need to do the following :
-- NodesJS 
-
 First is getting your API from Binance(APIKEY and SECRET) which you need to store those value on the following files :
 
 config/apikey.txt
 
 config/secret.txt
+
+To use this bot you need to do the following :
+- NodesJS 
 
 *Install additional modules
 1. Express
@@ -59,6 +59,10 @@ $ npm i request
 $ npm i read-last-lines
 
 $ npm i node-binance-api
+
+8. Once your setup is ready, you can start the bot by typing on your terminal
+
+$ node [path-of-bot]/nimble/index.js
 
 
 
