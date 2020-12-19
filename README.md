@@ -13,6 +13,12 @@ Future Developments Includes:
 To use this bot you need to do the following :
 - NodesJS 
 
+First is getting your API from Binance(APIKEY and SECRET) which you need to store those value on the following files :
+
+config/apikey.txt
+
+config/secret.txt
+
 *Install additional modules
 1. Express
 2. Socket.io
@@ -37,3 +43,26 @@ $ sudo apt install npm
 $ sudo apt-get update
 
 $ sudo apt-get upgrade
+
+6. Reboot your system by typing on the terminal :
+
+$ sudo reboot
+
+7. Once your system has reboot, go back to your installation folder and contiue installing the required packages with the following commands on you terminal:
+
+$ npm install express --save
+
+$ npm i socket.io
+
+$ npm i request
+
+$ npm i read-last-lines
+
+$ npm i node-binance-api
+
+
+
+
+
+
+
