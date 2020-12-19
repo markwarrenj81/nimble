@@ -1,6 +1,6 @@
 ##### Nimble #####
 
-Based on the xrpl trading bot based on the CryptoCowboy XRPL trading bot.
+Based on the xrpl trading by CryptoCowboy.
 This is a version made to work to perform automated buy and sale orders on Binance exchange.
 The concecpt is the same except on the settings differ in the setup for adding Binance apikey and secret key.
 
