@@ -1,16 +1,11 @@
-# CryptoCowboy
+##### Nimble #####
 
-A live working sample can be found here: http://computercowboy.tech/
-
-Tutorial: https://www.youtube.com/watch?v=yVVLsfQgf7A
+Based on the xrpl trading bot from CryptoCowboy
+This is a version made to work to perform automated buy and sale orders on Binance exchange.
+The concecpt is the same except on the settings differ in the setup for adding Binance apikey and secret key.
 
 This is a beta release; Use at your own risk.
 
+Future Developments Includes:
 
-TODO:
-
-• Add more useful comments.
-
-• Place more logic into functions
-
-• Create modules to separate function types
+• To work with additional trading pairs, currently its made to work only for XRPUSDT trading pairs.
