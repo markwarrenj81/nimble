@@ -1,0 +1,1597 @@
+<!doctype html>
+<html>
+	<head>
+		<title>
+			nimble xrpl-bot
+		</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+		
+		<!-- Bootstrap CSS CDN -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+		<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
+    	<!-- Custom styles for this template -->
+	    <link href="css/simple-sidebar.css" rel="stylesheet">
+
+		<!-- Font Awesome JS -->
+		<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+		<!-- Popper JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+		<!-- Bootstrap JS -->
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+		<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+		
+		<style>
+			* { margin: 0; padding: 0; box-sizing: border-box; }
+			body { font: 13px Poppins; font-weight: bold; }
+			form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+			form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+			form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+			#messages { list-style-type: none; margin: 0; padding: 0; }
+			#messages li { padding: 5px 10px; }
+			#messages li:nth-child(odd) { background: #eee; }
+			a:hover {text-decoration: none;}
+
+			.content-section{
+				margin-top: 18px;
+			}
+
+			.modal {
+
+			  padding: 0 !important; // override inline padding-right added from js
+			}
+			.modal-dialog{
+			    position: relative;
+			    display: block; /* This is important */ 
+			    overflow-y: auto;    
+			    overflow-x: auto;
+			    width: auto;
+			    min-width: 300px;   
+			}
+			.modal .modal-content {
+			  height: 96%;
+			  border: 0;
+			  border-radius: 0;
+			}
+			.modal .modal-body {
+			  overflow-y: auto;
+			}
+
+			/* The snackbar - position it at the bottom and in the middle of the screen */
+			#snackbar {
+			  visibility: hidden; /* Hidden by default. Visible on click */
+			  min-width: 250px; /* Set a default minimum width */
+			  margin-left: -125px; /* Divide value of min-width by 2 */
+			  background-color: #333; /* Black background color */
+			  color: #fff; /* White text color */
+			  text-align: center; /* Centered text */
+			  border-radius: 2px; /* Rounded borders */
+			  padding: 16px; /* Padding */
+			  position: fixed; /* Sit on top of the screen */
+			  z-index: 1; /* Add a z-index if needed */
+			  left: 50%; /* Center the snackbar */
+			  bottom: 30px; /* 30px from the bottom */
+			}
+
+			/* Show the snackbar when clicking on a button (class added with JavaScript) */
+			#snackbar.show {
+			  visibility: visible; /* Show the snackbar */
+			  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+			  However, delay the fade out process for 2.5 seconds */
+			  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+			  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+			}
+
+			/* Animations to fade the snackbar in and out */
+			@-webkit-keyframes fadein {
+			  from {bottom: 0; opacity: 0;}
+			  to {bottom: 30px; opacity: 1;}
+			}
+
+			@keyframes fadein {
+			  from {bottom: 0; opacity: 0;}
+			  to {bottom: 30px; opacity: 1;}
+			}
+
+			@-webkit-keyframes fadeout {
+			  from {bottom: 30px; opacity: 1;}
+			  to {bottom: 0; opacity: 0;}
+			}
+
+			@keyframes fadeout {
+			  from {bottom: 30px; opacity: 1;}
+			  to {bottom: 0; opacity: 0;}
+			}
+
+		</style>
+	</head>
+	
+	<script src="/socket.io/socket.io.js"></script>
+	
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js"></script>
+
+	<!--
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	-->
+	
+	<script>	
+		$(document).ready(function()
+		{
+			var pricePerShare = 0;
+			var marketValue = 0;
+			var netWorth = 0;
+			var USD = 0;
+			var XRP = 0;
+			var socket;
+			var totalTransactions = 0;
+			var fixedPoint = 0;
+			var hours = 0;
+			var reserveMultiplier = 0;
+			var reserve = 0.00;
+			var reserveXRP = 0.00;
+						
+			var dayTradeGains = 0;
+			
+			var BTCPrice = 0;
+
+			var orderPriceSell = 0.00;
+			var orderPricebuy = 0.00;
+			
+			var openOrderRange = 0.00;
+			var currentPricePercentage = 0.00;
+			var totalUSD = 0.00;
+			var totalXRP = 0.00;
+			var totalLiquid = 0.00;
+			var totalReserve = 0.00;
+						
+			var APR = 0.00;
+			var dayTradePercent = 0;
+
+			var initialCapital = 0;
+			var startPrice = 0.00;
+			var xrpForTrade = 0;
+			var availableUSDT = 0.00;
+			var amtUSDTSum = 0.00;
+			var xrpForTradeSum = 0.00;
+			var startupCapital = 0.00;
+			var orderXRPBuy = 0; 
+			var orderXRPSell = 0;
+			var buyTradeVal = 0.00;
+			var sellTradeVal = 0.00;
+
+			
+			function isEmptyOrSpaces(str){
+			    return str === null || str.match(/^ *$/) !== null;
+			}
+			
+			$( function() 
+			{
+				$( document ).tooltip();
+			} );
+			
+			//	Socket IO
+			$(function () 
+			{
+				socket = io();
+				
+				$('form').submit(function()
+				{
+					socket.emit('inputReceived', $('#textBox').val());	//	Emit textbox
+					
+					$('#textBox').val('');	//	Clear Text
+					
+					return false;
+				});
+			
+				socket.on('emit', function(msg)
+				{
+					
+					if(isEmptyOrSpaces(msg))return;	
+
+					let notes ="<div class='alert alert-secondary' role='alert'>" + msg + "</div>"; 
+
+					if(msg == "We sold XRP!")
+					{
+						
+						notes ="<div class='alert alert-success' role='alert'>" + msg + "</div>"; 
+						$('#messages').append(notes);
+						
+						//$('#messages').append($('<li style="color:green;">').text(msg));
+						beep();
+
+						$('#snackbar').html('We sold XRP!');
+						displaySnackbar();
+					}
+					else if(msg == "We bought XRP!") 
+					{
+						
+						notes ="<div class='alert alert-danger' role='alert'>" + msg + "</div>"; 
+						$('#messages').append(notes);
+						//$('#messages').append($('<li style="color:red;">').text(msg));
+						beep();
+
+						$('#snackbar').html('We bought XRP!');
+						displaySnackbar();	
+					}
+					else if(msg.charAt(0) == '[')
+					{
+						
+						var arrText = msg.split(" ][ ");
+						var arrDetails = arrText[1].split(" ]: ");
+						
+						var msgDate = arrText[0].replace("[ ", "");
+						var msgTime = arrDetails[0]
+						var details = arrDetails[1];
+
+						/*
+						console.log('msgDate : [' + msgDate + "]");
+						console.log('msgTime : [' + msgTime + "]");
+						console.log('details : ' + details);
+						*/
+						
+						//$('#messages').append($('<li style="color:grey;">').text(notes));
+						$('#messages').append(notes);
+					}
+					else if(msg == "We gained $0 on that trade.")
+					{
+						//	Do nothing... This sucks.
+					}
+					else
+					{
+						//$('#messages').append($('<li>').text(msg));
+						$('#messages').append(notes);
+					}
+					
+					var wtf = $('#messagesListDiv');
+					var height = wtf[0].scrollHeight;
+					wtf.scrollTop(height);
+				});
+				
+				socket.on('privateMessage', function(msg)
+				{
+					$('#messages').append($('<li>').text(msg));
+
+					var wtf = $('#messagesListDiv');
+					var height = wtf[0].scrollHeight;
+					wtf.scrollTop(height);
+				});
+				
+				socket.on('USD', function(msg)
+				{
+					USD = msg;
+					USD = parseFloat(USD).toFixed(2);
+					$('#cashDiv').text("$" + USD);
+					
+					
+					
+					//Color reinvestment mult
+					let reinvestmentPrice = 0.00;
+					reinvestmentPrice = marketValue * reserveMultiplier;
+					
+					let reinvestmentPercentage = 0.00;
+					reinvestmentPercentage = (USD / reinvestmentPrice);
+					reinvestmentPercentage = (reinvestmentPercentage * 200.00);
+					reinvestmentPercentage = (reinvestmentPercentage - 100.00);
+					
+					let color = 0.00;
+					if(parseFloat(reinvestmentPercentage) > 0.00)
+					{
+						
+						color = Math.floor((parseFloat(reinvestmentPercentage) * 2.0));
+						color = rgbToHex(color);
+						color = "#00" + color + "00";
+						$("#cashDiv").css('color', (color));
+						
+						
+					}
+					else if(parseFloat(reinvestmentPercentage) < 0.00)
+					{
+						color = Math.floor(-parseFloat(reinvestmentPercentage) * 2.0);
+						
+						color = rgbToHex(color);
+						color = "#" + color + "0000";
+						
+						
+						//$('#messages').append($('<li>').text(color));
+						
+						$("#cashDiv").css('color', (color));
+					}
+					else
+					{
+						$("#cashDiv").css('color', 'black');
+					}
+					
+					
+				});
+				
+				socket.on('XRP', function(msg)
+				{
+					XRP = msg;
+					XRP = parseFloat(XRP).toFixed(2);
+					$('#sharesDiv').text("x" + XRP);
+					$('#sharesValueDiv').text("$" + (XRP * pricePerShare).toFixed(2));
+				});
+				
+				socket.on('reserve', function(msg)
+				{
+					reserve = parseFloat(msg).toFixed(2);
+					$('#reserveDiv').text("$" + reserve);
+				});
+				
+				socket.on('reserveXRP', function(msg)
+				{
+					reserveXRP = parseFloat(msg).toFixed(2);
+					$('#reserveXRPDiv').text("x" + reserveXRP);
+					$('#reserveXRPValueDiv').text("$" + (reserveXRP * pricePerShare).toFixed(2));
+				});
+				
+				socket.on('fixedPoint', function(msg)
+				{
+					fixedPoint = msg;
+					$('#fixedPointDiv').text(parseFloat(msg).toFixed(2));
+				});
+				
+				socket.on('range', function(msg)
+				{
+					$('#rangeDiv').text(parseFloat(msg).toFixed(2));
+					$('#rangePercentageDiv').text(((parseFloat(msg) * 100.00) / parseFloat(marketValue)).toFixed(2) + "%");
+				});
+
+				socket.on('salesMultiplier', function(msg)
+				{
+					//$('#salesMultiplierDiv').text(parseFloat(msg).toFixed(4));
+				});
+
+				socket.on('orderPriceBuy', function(msg)
+				{
+					$('#orderPriceBuyDiv').text(parseFloat(msg).toFixed(5));
+					orderPricebuy = parseFloat(parseFloat(msg).toFixed(5));
+				});
+
+				socket.on('orderPriceSell', function(msg)
+				{
+					$('#orderPriceSellDiv').text(parseFloat(msg).toFixed(5));
+					
+					
+					//let orderPriceSell = document.getElementById("orderPriceSellDiv");
+					
+					//$( "#orderPriceSellDiv" ).text
+					orderPriceSell = parseFloat(parseFloat(msg).toFixed(5));
+					openOrderRange = parseFloat(orderPriceSell - orderPricebuy);
+					currentPricePercentage = parseFloat((pricePerShare.toFixed(5)) - orderPricebuy) / openOrderRange;
+					currentPricePercentage = ((currentPricePercentage * 200.00) - 100.00).toFixed(2);	//	 To 200%
+
+					
+					let color = 0.00;
+					
+					if(parseFloat(currentPricePercentage) > 0.00)
+					{
+						
+						color = Math.floor((parseFloat(currentPricePercentage) * 2.0));
+						color = rgbToHex(color);
+						color = "#00" + color + "00";
+						$("#currentPriceDiv").css('color', (color));
+						
+						
+					}
+					else if(parseFloat(currentPricePercentage) < 0.00)
+					{
+						color = Math.floor(-parseFloat(currentPricePercentage) * 2.0);
+						
+						color = rgbToHex(color);
+						color = "#" + color + "0000";
+						
+						
+						//$('#messages').append($('<li>').text(color));
+						
+						$("#currentPriceDiv").css('color', (color));
+					}
+					else
+					{
+						$("#currentPriceDiv").css('color', 'black');
+					}
+				});
+				
+				socket.on('reserveMultiplier', function(msg)
+				{
+					reserveMultiplier = Number(msg.toFixed(3));
+					$('#reserveMultiplierDiv').text(msg);
+				});
+				
+				
+				socket.on('hours', function(msg)
+				{
+					if(parseFloat(msg) >= (24.00 * 365.25))
+					{
+						hours = (msg.toFixed(2) / (24.00 * 365.25)).toFixed(2);	//	years
+						$('#hoursDiv').text(hours + " years");
+					}
+					else if(parseFloat(msg) >= (24.00 * 30.4375))
+					{
+						hours = (msg.toFixed(2) / (24.00 * 30.4375)).toFixed(2);	//	months
+						$('#hoursDiv').text(hours + " months");
+					}
+					else if(parseFloat(msg) >= (24.00 * 7.00))
+					{
+						hours = (msg.toFixed(2) / (24.00 * 7.00)).toFixed(2);	//	weeks
+						$('#hoursDiv').text(hours + " weeks");
+					}
+					else if(parseFloat(msg) >= 24.00)
+					{
+						hours = (msg.toFixed(2) / 24).toFixed(2);	//	days
+						$('#hoursDiv').text(hours + " days");
+					}
+					else if(parseFloat(msg) <= 24.00)
+					{
+						hours = msg.toFixed(2);	//	hours
+						$('#hoursDiv').text(hours + " hours");
+					}
+					
+					
+					hours = (msg.toFixed(2) / 24).toFixed(2);	//	days
+					
+				});
+				
+				socket.on('pricePerShare', function(msg)
+				{
+				
+					/*
+					<div>
+						Current XRP Price:
+						#ff0000 Red
+						#00ff00 Green
+						<div id=currentPriceDiv style="color:#b241f4;">
+							Waiting for incoming data...
+						</div>
+					</div>
+					*/
+					
+					//$("#currentPriceDiv").css('color', 'red');
+					//currentPricePercentage
+					let color = 0.00;
+					
+					if(parseFloat(currentPricePercentage) > 0.00)
+					{
+						
+						color = Math.floor((parseFloat(currentPricePercentage) * 2.4));
+						color = rgbToHex(color);
+						color = "#00" + color + "00";
+						$("#currentPriceDiv").css('color', (color));
+						
+						
+					}
+					else if(parseFloat(currentPricePercentage) < 0.00)
+					{
+						color = Math.floor(-parseFloat(currentPricePercentage) * 2.4);
+						
+						//$('#messages').append($('<li>').text(currentPricePercentage));
+						//$('#messages').append($('<li>').text(-parseFloat(currentPricePercentage)));
+
+						//$('#messages').append($('<li>').text(color));
+						
+						color = rgbToHex(color);
+						color = "#" + color + "0000";
+						
+						
+						//$('#messages').append($('<li>').text(color));
+						
+						$("#currentPriceDiv").css('color', (color));
+					}
+					else
+					{
+						$("#currentPriceDiv").css('color', 'black');
+					}
+
+
+					//$('#messages').append($('<li>').text(color));
+					//$('#messages').append($('<li>').text("#0000" + "FF"));
+					//$("#currentPriceDiv").css('color', 'red');
+					
+					pricePerShare = msg;
+					marketValue = XRP * pricePerShare;
+					
+					
+					totalUSD = parseFloat(USD) + parseFloat(reserve);
+					totalUSDDiv.innerHTML = "$" +  (parseFloat(totalUSD) + parseFloat(buyTradeVal)).toFixed(2);
+					
+					totalXRP = parseFloat(XRP) + parseFloat(reserveXRP) + parseFloat(orderXRPSell);				
+					totalXRPDiv.innerHTML = "x" +  totalXRP.toFixed(2); 					
+					totalXRPValueDiv.innerHTML = "$" +  (totalXRP * pricePerShare).toFixed(2);
+
+					// MODS COMES HERE [START]
+					let openTradeValue = parseFloat(sellTradeVal) + +  parseFloat(buyTradeVal);
+					totalTradeOrdersDiv.innerHTML = "$" +  openTradeValue.toFixed(2);
+					// MODS COMES HERE [END]
+					
+					totalLiquid = parseFloat(USD) + (parseFloat(XRP) * parseFloat(pricePerShare));
+					marketValueDiv.innerHTML = "$" +  totalLiquid.toFixed(2);
+					
+					totalReserve = parseFloat(reserve) + (parseFloat(reserveXRP) * parseFloat(pricePerShare));
+					totalReserveDiv.innerHTML = "$" +  totalReserve.toFixed(2);
+					
+					netWorth = parseFloat(marketValue) + parseFloat(USD) + parseFloat(reserve) + (parseFloat(reserveXRP) * parseFloat(pricePerShare)) + parseFloat(buyTradeVal) + parseFloat(sellTradeVal);
+				
+					currentPriceDiv.innerHTML = "<h2>" + "$" +  pricePerShare.toFixed(5) + "</h2>";
+					
+					netWorthDiv.innerHTML = "$" +  netWorth.toFixed(2);
+					
+					totalTransactionsDiv.innerHTML = totalTransactions;
+					
+					let maxCash = (fixedPoint * reserveMultiplier);
+					let timeWarp = ((maxCash / 2.00) / USD);	//	Up to double speed (5min) when things are good (when TW = 0.5)
+					let timeoutTime = 300000.00;	//	Every 5 min
+					timeoutTime = (timeoutTime * timeWarp);
+					timeoutTime = parseInt(timeoutTime);
+					
+					timeoutTime =  timeoutTime + 300000.00;	//	Add fixed time of 5 min
+					let targetTD = ((24.00 * 60.00 * 60.00) / (timeoutTime / 1000.00) / 50.00);
+					targetTDDiv.innerHTML = (targetTD).toFixed(3);
+	
+					var transactionsPerDay = (totalTransactions / hours).toFixed(2);
+					transactionsPerDayDiv.innerHTML = transactionsPerDay;
+					
+					
+					
+					//getBTC();
+					//***********************************************************			
+
+
+					//***********************************************************
+					
+				});
+				
+				socket.on('totalTransactions', function(msg)
+				{
+					totalTransactions = msg;
+				});
+				
+				socket.on('dayTradeGains', function(msg)
+				{
+					dayTradeGains = msg;
+					
+					dayTradePercent = 0;
+					var gainPerDay = 0;
+					
+					if(hours != 0)
+					{
+						gainPerDay = (dayTradeGains / hours).toFixed(2);	//	'hours' is actually days
+						
+						//dayTradePercent = ((dayTradeGains / (netWorth)) * 100);
+						//dayTradePercent = ((dayTradePercent / hours).toFixed(4));
+						dayTradePercent = (gainPerDay - (reserve / hours) - (reserveXRP * pricePerShare / hours)) / (netWorth - reserve - (reserveXRP * pricePerShare));
+					}
+					
+					APR = (Math.pow((1 + dayTradePercent), 365) * 100) - 100;	//	
+					//-------------------
+					//APR = (Math.pow((1 + ((dayTradePercent * (1 / (1 + reserveMultiplier))) / 100)), 365) * 100) - 100;
+					
+					let profit = (netWorth - startupCapital); //Change to Startup Capital Value
+					let profitPercentage = (profit / startupCapital) * 100.00;
+
+					profitDiv.innerHTML = "$" + profit.toFixed(2);
+					profitPercentageDiv.innerHTML = profitPercentage.toFixed(2) + "%";
+					
+					dayTradeGainsDiv.innerHTML = "$" + msg.toFixed(2);
+					gainPerDayDiv.innerHTML = "$" + gainPerDay;
+					//percentGainsDiv.innerHTML = dayTradePercent + "%";
+					APRDiv.innerHTML = APR.toFixed(2) + "%";
+			
+					daysUntilTenDiv.innerHTML = timeUntilGoal(10000, netWorth);
+					daysUntilHundredDiv.innerHTML = timeUntilGoal(100000, netWorth);
+					daysUntilMillionDiv.innerHTML = timeUntilGoal(1000000, netWorth);
+					//-------------------
+				});
+				
+				socket.on('userCount', function(msg)
+				{
+
+					userCountDiv.innerHTML = msg;
+				});
+				
+				socket.on('connectionStatus', function(msg)
+				{
+
+					connectionStatusDiv.innerHTML = msg;
+				});
+				
+				socket.on('autoTraderStatus', function(msg)
+				{
+
+					autoTraderStatusDiv.innerHTML = msg;
+
+					if(msg == 'Disabled'){
+						$('#autoTraderToggle').bootstrapToggle('off');
+					}else{
+						$('#autoTraderToggle').bootstrapToggle('on');	
+					}
+
+				});
+
+				/* Bot Configurations */
+
+				/*
+					<input type="text" class="form-control" id="setPrice">
+					</div>
+					<div class="form-group">
+					<label for="amtXRP">Amount of XRP </label>
+					<input type="text" class="form-control" id="amtXRP">
+					</div>
+
+					<div class="form-group">
+					<label for="amtUSDT">Amount of USDT </label>
+					<input type="text" class="form-control" id="amtUSDT">
+				*/
+
+				socket.on('initialCapital', function(msg)
+				{
+					initialCapital = msg;
+				});
+
+				socket.on('startPrice', function(msg)
+				{
+					startPrice = msg;
+					startPriceDiv.innerHTML = "*Startup : 1 XRP ~ $" + msg;
+					setPrice.value = msg;
+
+					
+
+				});
+
+				socket.on('xrpForTrade', function(msg)
+				{
+					xrpForTrade = msg;
+					startXRPTrade.innerHTML = "x" + parseFloat(msg).toFixed(2);
+					amtXRP.value = msg;
+
+					
+					startXRPTradeVal.innerHTML = "$" + (xrpForTrade*startPrice).toFixed(2);
+					fixedPointSetup.value = (xrpForTrade*startPrice).toFixed(2);
+				});
+
+				socket.on('availableUSDT', function(msg)
+				{
+					availableUSDT = msg;
+
+					startUSDTVal.innerHTML = "$" + msg;
+					amtUSDT.value = msg;
+
+					xrpForTradeSum = (xrpForTrade*startPrice);
+					amtUSDTSum = parseFloat(msg);
+
+					startupCapital = xrpForTradeSum + amtUSDTSum;
+
+					startupCapitalVal.innerHTML = "$" + startupCapital.toFixed(2);
+				});
+
+				socket.on('configUpdates', function(msg)
+				{
+				
+					$('#snackbar').html('New settings saved');
+					displaySnackbar();	
+
+				});
+
+				// XRPBuyOrdersDiv XRPSalesOrderDiv XRPSaleOrderPriceDiv totalTradeOrdersDiv
+
+				socket.on('orderXRPBuy', function(msg)
+				{
+					//USDT put aside for buy order 
+					
+					/* orderPricebuy */
+
+					orderXRPBuy = msg; 
+
+					XRPBuyOrderDiv.innerHTML = orderXRPBuy + " XRP";
+
+					buyTradeVal = (orderXRPBuy*orderPricebuy).toFixed(2);
+			
+					XRPBuyOrdersDiv.innerHTML = "$" + buyTradeVal; 
+				});
+
+				socket.on('orderXRPSell', function(msg)
+				{
+					//XRP put aside for sell order
+
+					/* orderPriceSell */
+			
+					orderXRPSell = msg;
+
+					XRPSellOrderDiv.innerHTML = orderXRPSell + " XRP";
+
+					XRPSalesOrderDiv.innerHTML = "x" + parseFloat(orderXRPSell).toFixed(2);
+
+					sellTradeVal = (orderXRPSell*orderPriceSell).toFixed(2);
+
+					XRPSaleOrderPriceDiv.innerHTML = "$" + sellTradeVal;
+
+
+				});
+
+			});
+
+			$('#loadCurrentEntry').on('click', function(event) {
+				setPrice.value = pricePerShare.toFixed(5);
+				amtXRP.value = parseFloat(XRP) + parseFloat(reserveXRP) + parseFloat(orderXRPSell);
+				amtUSDT.value = (parseFloat(totalUSD) + parseFloat(buyTradeVal)).toFixed(2);
+
+				fixedPointSetup.value = (amtXRP.value*pricePerShare.toFixed(5)).toFixed(2);
+
+			});	
+
+			$('#updateSettingsBtn').on('click', function(event) {
+				
+				let usdt_to_xrp = (amtUSDT.value/setPrice.value).toFixed(0);
+
+				let initial = parseInt(amtXRP.value) + parseInt(usdt_to_xrp);
+
+				var params = { initial: initial,
+							   startPrice: setPrice.value,
+							   xrpTrade: amtXRP.value,
+							   USDT: amtUSDT.value
+						   };
+
+                let conf = JSON.stringify(params);
+
+				socket.emit('updateSettings', conf);
+
+				//$('#myModal').modal('toggle');
+			
+			});
+			
+			function getBTC()
+			{
+				$.getJSON('https://api.coindesk.com/v1/bpi/currentprice.json', function(data) 
+				{
+					BTCPrice = parseFloat(data.bpi.USD.rate.replace(/,/g, '')).toFixed(2);
+					//BTCPriceDiv.innerHTML = "$" +  BTCPrice;
+					//console.log(data.bpi.USD.rate);
+					//BTCPrice = parseFloat(data.bpi.USD.rate);
+				});
+			}
+
+		    $("#menu-toggle").click(function(e) {
+		      e.preventDefault();
+		      $("#wrapper").toggleClass("toggled");
+		    });
+
+		    $("#menu-settings").click(function(e) {
+		      e.preventDefault();
+		      console.log("show settings");
+		    });
+
+			$('.list-group-item').on('click', function() {
+			    
+			    var $this = $(this);
+			    var $alias = $this.data('alias');
+
+
+			    if(window.matchMedia("(max-width: 767px)").matches){
+			        // The viewport is less than 768 pixels wide
+			       $("#wrapper").toggleClass("toggled");
+			    } else{
+			        // The viewport is at least 768 pixels wide
+			        //alert("This is a tablet or desktop.");
+			    }
+
+			    //$('.active').removeClass('active');
+			    //$this.toggleClass('active')
+
+			    // Pass clicked link element to another function
+			    loadContent($this, $alias)
+
+				
+
+			})
+
+			function loadContent($this,  $alias) {
+			    var id = '#' + $this.text().toLowerCase();
+			    var target = $(id);
+			    
+				[].forEach.call(document.querySelectorAll('.content-section'), function (el) {
+				  el.style.display = 'none';
+				});
+
+				target.css("display", "block");
+
+				var wtf = $('#wrapper');
+				var height = wtf[0].scrollHeight;
+				wtf.scrollTop(height);
+
+			}
+
+			[].forEach.call(document.querySelectorAll('.content-section'), function (el) {
+			  el.style.display = 'none';
+			});
+
+			$('#dashboard').css("display", "block");
+			
+			
+			document.getElementById('autoTraderToggle').parentNode.addEventListener('click', function(event){
+				// the value of `this` here is the element the event was fired on. 
+				// In this situation, it's the element with the ID of 'approval'.
+				
+				var state = !this.querySelector('input').checked; 
+				
+				
+	        	if(state){  
+	        		socket.emit('inputReceived', 'Start');	//	Emit textbox
+
+	        	}else{
+	        		socket.emit('inputReceived', 'Stop');	//	Emit textbox
+	        	}
+			
+			});  
+
+
+			$('#resetBotBtn').on('click', function(event) {
+				
+				socket.emit('inputReceived', 'Reset');
+			
+			});
+
+			$('#cancelAllBtn').on('click', function(event) {
+				
+				$('#deleteItemModal').modal();
+				$("#deleteItemModal").on('shown.bs.modal', function () {
+
+			    $("#confirmCancelBtn").unbind().on('click', function () {
+				   	
+				   	socket.emit('inputReceived', 'CancelAll');	
+
+				   	$('#deleteItemModal').modal('hide');					
+
+			      });			  					   
+				});
+			
+			});
+
+			$('#donateLink').on('click', function(event) {
+				
+				$('#donationModal').modal();
+			
+			});
+
+		    function displaySnackbar() {
+			  // Get the snackbar DIV
+			  var x = document.getElementById("snackbar");
+
+			  // Add the "show" class to DIV
+			  x.className = "show";
+
+			  // After 3 seconds, remove the show class from DIV
+			  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+		    }
+			
+			function beep()
+			{
+				var snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");  
+				snd.play();
+			}
+			
+			function rgbToHex(rgb) 
+			{ 
+				var hex = Number(rgb).toString(16);
+				
+				if (hex.length < 2)
+				{
+					hex = "0" + hex;
+				}
+				return hex;
+			};
+			
+			
+			function timeUntilGoal(goalValue, currentValue) 
+			{ 
+				let timeUntil = (Math.log(goalValue / (currentValue))) / Math.log(1 + dayTradePercent);
+	
+				if(timeUntil >= 365.25)
+				{
+					timeUntil = ((timeUntil / 365.25).toFixed(2)) + " years";
+				}
+				else if(timeUntil >= 30.43)
+				{
+					timeUntil = ((timeUntil / 30.43).toFixed(2)) + " months";
+				}
+				else
+				{
+					timeUntil = timeUntil + " days";
+				}
+				
+				return timeUntil;
+			};
+			
+
+		});
+	</script>
+	
+	<body>
+
+  <div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading">
+		<img src="xrp.png" width="30" height="30" class="d-inline-block align-top" alt="">nimble
+	  </div>
+      <div class="list-group list-group-flush">
+        <a href="#home" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+        <a href="#notification" class="list-group-item list-group-item-action bg-light">Notifications</a>
+        <a href="#performance" class="list-group-item list-group-item-action bg-light">Performance</a>
+        <a href="#settings" class="list-group-item list-group-item-action bg-light">Settings</a>
+        <a href="#about" class="list-group-item list-group-item-action bg-light">About</a>
+        <!--
+        <a href="#" class="list-group-item list-group-item-action bg-light">Profile</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Status</a>
+		-->
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      	<button class="btn btn-default" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></button>
+
+        <!--
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+		-->
+
+		<!--
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Dropdown
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+		-->	
+    	
+      </nav>
+
+      <div class="container-fluid">
+
+      	<div id="dashboard" class="content-section">
+
+		<h2 class="mt-4">xrpl-bot {binance}</h2>
+
+			Mean reversion algorithm.
+			<br>
+			<br>
+			Please allow 30 seconds for all data to load.
+			<br>
+			<br>
+
+		    <span class="text-right">
+				<div class="form-check pl-0">
+				  <label for="autoTraderToggle" class="form-check-label">Auto Trader</label>&nbsp;&nbsp;
+				  <input id="autoTraderToggle" data-size="sm" class="form-check-input" type="checkbox" data-toggle="toggle">
+				</div>	
+		    </span>			
+		    
+		    <br>
+
+			<div class="table-responsive-md">
+			<table class="table">
+			  <caption>Active Trades</caption>
+			  <thead>
+			    <tr>
+			      <th scope="col" class="bg-danger text-center"  style="color:#ffffff;">Buy Price</th>
+			      <th scope="col" class="text-center" style="background-color: #61675f;color:#ffffff;">XRP Price</th>
+			      <th scope="col" class="bg-success text-center"  style="color:#ffffff;">Sell Price</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="Buy price: When XRP hits this price, we buy more." style="background-color: #f9c7cd">
+					<div id="orderPriceBuyDiv" class="text-center">
+						Buy Price
+					</div>      	
+			      </th>
+			      <td rowspan='2' class="align-middle" title="XRP Price: Current price of XRP. The number is red when we are close to our buy price and green when we are close to our sell price." style="background-color: #f1f1f1">
+					<div id="currentPriceDiv" class="text-center">
+						<h2>XRP Price</h2>
+					</div>
+			      </td>
+			      <td title="Sell price: When XRP hits this price, we sell some." style="background-color: #d3f9c5">
+					<div id="orderPriceSellDiv" class="text-center">
+						Sell Price
+					</div>			
+			      </td>
+			    </tr>
+			    <tr>
+			      <th scope="row" title="XRP amount placed for Buy order" style="background-color: #f9c7cd">
+					<div id="XRPBuyOrderDiv" class="text-center">
+						XRP to Buy 
+					</div>      	
+			      </th>
+			      <!--
+			      <td title="XRP amount placed for Sell order" style="background-color: #f1f1f1">
+					<div class="text-center">
+						
+					</div>
+			      </td>
+			  	  -->
+			      <td title="Sell price: When XRP hits this price, we sell some." style="background-color: #d3f9c5">
+					<div id="XRPSellOrderDiv" class="text-center">
+						XRP to Sell
+					</div>			
+			      </td>
+			    </tr>			    
+			  </tbody>
+			</table>
+
+ 			
+ 			<table class="table table-borderless">
+			<tr>
+				<td scope="row"class="text-left">
+					<button id="cancelAllBtn" class="btn"><i class="fa fa-trash"></i> Cancel all</button>
+				</td>
+				<td scope="row"class="text-right">
+					<button id="resetBotBtn" class="btn"><i class="fa fa-undo"></i> Reset Bot</button>
+				</td>
+			</tr>	
+ 			</table>
+
+			</div>
+			
+
+			<br>
+
+
+			<div class="table-responsive-md">
+			<table class="table">
+			  <caption><span id="startPriceDiv"></span></caption>	
+			  <thead class="thead-light">
+			    <tr>
+			      <th scope="col"></th>
+			      <th scope="col"><center>USDT</center></th>
+			      <th scope="col"><center>XRP</center></th>
+			      <th scope="col"></th>
+			      <th scope="col"><center>Total</center></th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="Market: The money that we get to play with.">Market</th>
+			      <td title="USD in the Market: This is the total amount of USD we have available to buy more XRP with. This number is green when we have plenty of USD available and red when we are low in USD.">
+					<div id="cashDiv" class="text-right">
+						Waiting for incoming data...
+					</div>
+			      </td>
+			      <td title="XRP in the Market: This is the number of XRP we have available to sell.">
+					<div id="sharesDiv" class="text-right">
+						Waiting for incoming data...
+					</div>
+			      </td>
+			      <td>
+					<div id="sharesValueDiv" class="text-right">
+						Waiting for incoming data...
+					</div>      	
+			      </td>
+			      <td title="Total Market Value: This is the total value of USD and XRP that we have available to trade with.">
+					<div id="marketValueDiv" class="text-right">
+						Waiting for incoming data...
+					</div>      	
+			      </td>
+			    </tr>
+
+<!-- [NEW ROW START] -->
+
+			    <tr>
+			      <th scope="row" title="These are active trades that is on-going">Traded</th>
+			      <td title="">
+					<div id="XRPBuyOrdersDiv" class="text-right"> 
+						0.00
+					</div>
+			      </td>
+			      <td title="">
+					<div id="XRPSalesOrderDiv" class="text-right">
+						0.00
+					</div>
+			      </td>
+			      <td>
+					<div id="XRPSaleOrderPriceDiv" class="text-right">
+						0.00
+					</div>      	
+			      </td>
+			      <td title="Total Trades: USD trades + XRP trades">
+					<div id="totalTradeOrdersDiv" class="text-right">
+						0.00
+					</div>      	
+			      </td>
+			    </tr>
+
+<!-- [NEW ROW END] -->
+
+
+			    <tr>
+			      <th scope="row" title="Money from profits that we set aside to reduce our trading risks.">Reserve</th>
+			      <td title="USD Reserve: This is the amount of USD in our account that we will never trade with ever again. The bot automatically reinvests profits into itself but always takes a small amount to set aside so that it will remain risk free.">
+					<div id="reserveDiv" class="text-right">
+						Waiting for incoming data...
+					</div>
+			      </td>
+			      <td title="XRP Reserve: This is the amount of XRP in our account that we will never trade with ever again. We HODL this XRP. The bot automatically reinvests profits into itself but always takes a small amount to set aside so that it remains risk free.">
+					<div id="reserveXRPDiv" class="text-right">
+						Waiting for incoming data...
+					</div>
+			      </td>
+			      <td>
+					<div id="reserveXRPValueDiv" class="text-right">
+						Waiting for incoming data...
+					</div>      	
+			      </td>
+			      <td title="Total Reserve: USD reserve + XRP reserve">
+					<div id="totalReserveDiv" class="text-right">
+						Waiting for incoming data...
+					</div>      	
+			      </td>
+			    </tr>
+			    <tr>
+			      <th scope="row">Total</th>
+			      <td>
+					<div id="totalUSDDiv" class="text-right">
+						Waiting for incoming data...
+					</div>
+			      </td>
+			      <td>
+					<div id="totalXRPDiv" class="text-right">
+						Waiting for incoming data...
+					</div>
+			      </td>
+			      <td>
+					<div id="totalXRPValueDiv" class="text-right">
+						Waiting for incoming data...
+					</div>      	
+			      </td>
+			      <td title="Our networth... Go up darn it!">
+					<div id="netWorthDiv" class="text-right">
+						Waiting for incoming data...
+					</div>      	
+			      </td>
+			    </tr>
+			  </tbody>
+			  <thead class="thead-light">
+			    <tr>
+			      <th scope="col">Startup</th>
+			      <th scope="col" class="text-right">
+					<div id="startUSDTVal" class="text-right">
+						<!--5005-->
+					</div> 
+			      </th>
+			      <th scope="col" class="text-right">
+					<div id="startXRPTrade" class="text-right">
+						<!--5005-->
+					</div> 
+			      </th>
+			      <th scope="col" class="text-right">
+					<div id="startXRPTradeVal" class="text-right">
+						<!--[$2752.75]-->
+					</div>			      	
+			      </th>
+			      <th scope="col" class="text-right">
+					<div id="startupCapitalVal" class="text-right">
+						<!--[$2752.75]-->
+					</div>			      	
+			      </th>
+			    </tr>
+			  </thead>
+			</table>
+			</div>
+			
+			<br>	
+   		
+      	</div>
+
+      	<div id="notifications" class="content-section">
+      		<h2>Notifications</h2>
+
+			<div  id="messagesListDiv" style="height:800px; border:none; overflow-y:scroll;">
+				<ul id="messages"></ul>
+			</div>
+      		
+      	</div>
+
+      	<div id="performance" class="content-section">
+      		<h2>Bot Performance</h2>
+			
+			<table class="table">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th scope="col" class="text-center">Connection</th>
+			      <th scope="col" class="text-center">Auto Trader</th>
+			      <th scope="col" class="text-center">Run time</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="Connection Status: Is the bot connected to the XRPL?">
+					<div id="connectionStatusDiv" class="text-center">
+						Not connected
+					</div>
+				  </th>					    	
+			      <th scope="row" title="Auto Trader Status: Is the bot activly managing trades?">
+					<div id="autoTraderStatusDiv" class="text-center">
+						Disabled
+					</div>
+				  </th>
+			      <th scope="row" title="Run time: Time we have been collecting data">
+					<div id="hoursDiv" class="text-center">
+						0
+					</div>
+				  </th>
+			    </tr>				    
+			  </tbody>
+			</table>
+
+			<br>	
+
+			<table class="table">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th scope="col" class="text-center">Users Online</th>
+			      <th scope="col" class="text-center">Total Transactions</th>
+			      <th scope="col" class="text-center">Transactions per Day</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="Users Online: Number of users online.">
+					<div id="userCountDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>					    	
+			      <th scope="row" title="Total Transactions: Total number of transactions since we started collecting data">
+					<div id="totalTransactionsDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			      <th scope="row" title="Transactions per Day:(Total transactions) / (Days we have been collecting data)">
+					<div id="transactionsPerDayDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			    </tr>				    
+			  </tbody>
+			</table>
+
+			<br>
+
+
+			<table class="table">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th scope="col" class="text-center">Profit ($)</th>
+			      <th scope="col" class="text-center">Profit (%)</th>
+			      <th scope="col" class="text-center">Amt. Gains</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row">
+					<div id="profitDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>					    	
+			      <th scope="row">
+					<div id="profitPercentageDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			      <th scope="row" title="Total Gain: This is the total amount we have earned from day trading only. Example, if I make a sell order for $20 and made a 1.5% profit on that sale, it would be a gain of $0.30 even though my overall account balance might move up much more than that.">
+					<div id="dayTradeGainsDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			    </tr>				    
+			  </tbody>
+			</table>								
+
+			<br>	
+
+			<table class="table">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th scope="col" class="text-center">Daily Gains</th>
+			      <th scope="col" class="text-center">Gain APR</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="(Total gain) / (Number of days bot has been running)">
+					<div id="gainPerDayDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>					    	
+			      <th scope="row" title="Gain APR: This isn't the actual direct APR from my overall account balance. It's the calculated APR based off of the gains from day trading only. It's purely a measurment of my bot's performance and not the actual APR. This number is always positive even if we have a negative profit.">
+					<div id="APRDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			    </tr>				    
+			  </tbody>
+			</table>					
+
+			<br>	
+
+			<table class="table">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th scope="col" class="text-center">Time to $10,000</th>
+			      <th scope="col" class="text-center">Time until $100,000</th>
+			      <th scope="col" class="text-center">Time until $1,000,000</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="Time until $10K: Calculated time, including compunding interest until the networth of our account hits $10K. This does not factor in a price increase of XRP, only the amount we gain from day trading.">
+					<div id="daysUntilTenDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>					    	
+			      <th scope="row" title="Time until $100K: Calculated time, including compunding interest until the networth of our account hits $100K. This does not factor in a price increase of XRP, only the amount we gain from day trading.">
+					<div id="daysUntilHundredDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			      <th scope="row" title="Time until $1M: Calculated time, including compunding interest until the networth of our account hits $1M. This does not factor in a price increase of XRP, only the amount we gain from day trading.">
+					<div id="daysUntilMillionDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			    </tr>				    
+			  </tbody>
+			</table>				
+			
+			<br>	
+
+			<table class="table">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th scope="col" class="text-center">Fixed Point</th>
+			      <th scope="col" class="text-center">Reinvestment multiplier</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="Fixed point: This is a target total XRP value that my bot tries to maintain. (Does not include XRP in the reserve.)">
+					<div id="fixedPointDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>					    	
+			      <th scope="row" title="Reinvestment multiplier: This is the maximum amount of cash to XRP ratio I can have. Anytime the cash is in a surplus, The fixed point gets increased and the reinvestment multiplier gets a slight increase. The larger the cash to XRP ratio, the safer the autotrader is from massive price drops. The problem with a really high cash to XRP ratio is that you can miss out on some gains if the price of XRP increases significantly very quickly.">
+					<div id="reserveMultiplierDiv" class="text-center">
+						Disabled
+					</div>
+				  </th>
+			    </tr>				    
+			  </tbody>
+			</table>	
+
+			<br>
+
+			<table class="table">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th scope="col" class="text-center">Target T/D</th>
+			      <th scope="col" class="text-center">Range</th>
+			      <th scope="col" class="text-center">Range Percentage</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="Target T/D: The target number of transactions per day this bot is aiming to have. This number is controlled by manipulating the range percentage to match the market volitility.">
+					<div id="targetTDDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>					    	
+			      <th scope="row"title="Range: This is the target price difference in XRP value to execute a transaction at.  Example, my XRP is worth $1200 and the range is $16, my bot will place a buy order when the value of my XRP becomes $1200 - $16 = 1184 and a sell order when the XRP value becomes $1200 + $16 = $1216">
+					<div id="rangeDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			      <th scope="row" title="Range Percentage: The percentage price movement we need to see for a trade to execute.">
+					<div id="rangePercentageDiv" class="text-center">
+						Waiting for incoming data...
+					</div>
+				  </th>
+			    </tr>				    
+			  </tbody>
+			</table>
+      		
+      	</div>
+
+      	<div id="settings" class="content-section">
+
+      	  <h2>Startup Settings</h2>	
+      	  	
+		  <div class="form-group">
+		    <label for="setPrice">price per XRP</label>
+		    <input type="number" class="form-control" id="setPrice">
+		  </div>
+		  <div class="form-group">
+		    <label for="amtXRP">Amount of XRP </label>
+		    <input type="number" class="form-control" id="amtXRP">
+		  </div>
+
+		  <div class="form-group">
+		    <label for="amtUSDT">Amount of USDT </label>
+		    <input type="number" class="form-control" id="amtUSDT">
+		  </div>		
+
+		  <div class="form-group">
+		    <label for="fixedPointSetup">Fixed Point Setup</label>
+		    <input type="number" class="form-control" id="fixedPointSetup" readonly="true">
+		  </div>
+
+		  <div class="form-group">
+		  	<button id="loadCurrentEntry" type="button" class="btn btn-warning btn-lg btn-block">Binance Data</button>
+		  	<button id="updateSettingsBtn" type="button" class="btn btn-info btn-lg btn-block">Update Settings</button>	
+		  </div>
+
+      	</div>
+
+      	<div id="about" class="content-section">
+      		<h2>About Nimble</h2>
+
+<!-- ABout US [START] -->
+
+<div class="bg-white py-5">
+  <div class="container py-5">
+    <div class="row align-items-center mb-5">
+      <div class="col-lg-6 order-2 order-lg-1"><i class="fa fa-cogs fa-2x mb-3 text-primary"></i>
+        <h2 class="font-weight-light">XRPL Trade Bot</h2>
+        <p class="font-italic text-muted mb-4">A basic automated trading bot that is easy to use for opening buy and sale order in Binance. Just setup you API from your binance dashboard and let nimble do the rest in opening the orders based on "Mean reversion algorithm" to place your orders on binance. This bot was developed based on <a href="https://github.com/cragr/CryptoCowboy" >CryptoCowboy</a> XRPL trading bot which is extended to work with Binance. Some explanation on how the orginal concecpt used can be reffred <a href="https://www.youtube.com/watch?v=htg4oeMAKX0">here</a></p><!--<a href="#" class="btn btn-light px-5 rounded-pill shadow-sm">Learn More</a>-->
+      </div>
+      <div class="col-lg-5 px-5 mx-auto order-1 order-lg-2"><img src="https://res.cloudinary.com/mhmd/image/upload/v1556834139/img-1_e25nvh.jpg" alt="" class="img-fluid mb-4 mb-lg-0"></div>
+    </div>
+    <div class="row align-items-center">
+      <div class="col-lg-5 px-5 mx-auto"><img src="https://boorde.com/assets/images/feedback.png" alt="" class="img-fluid mb-4 mb-lg-0"></div>
+      <div class="col-lg-6"><i class="fa fa-exclamation-circle fa-2x mb-3 text-primary"></i>
+        <h2 class="font-weight-light">Use at your own risk</h2>
+        <p class="font-italic text-muted mb-4">Trading cryptocurrency is a very risky activity. Please make sure you have done your own research and use this tool at your own risk. This bot is intended as assist developers and investors to learn using a trading bot using available APIs.</p>
+        <p>Will extend more features for Nimble in the future as I get some feedbacks of its usage.</p>
+        <p><a id="donateLink" href="#" class="btn btn-primary px-5 rounded-pill shadow-sm">Donate to this project</a></p>
+        <br>
+        <h2 class="font-weight-light">Developer Contact</h2>
+        <p>
+        	<a href="https://www.facebook.com/xrpborneo"><img src="https://boorde.com/assets/images/icons8-facebook.svg">&nbsp;XRPBorneo</a>
+        	<a href="https://www.facebook.com/xrpborneo"><img src="https://boorde.com/assets/images/icons8-twitter.svg">&nbsp;BorneoXrp</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABout US [END] -->
+
+
+      	</div>
+
+		
+
+      </div>
+      <!-- container-fluid -->
+
+    </div>
+    <!-- /#page-content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+
+<div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteItemModalLabel">Cancel open trades</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      	<center>
+	      	<div style="text-align: center;position: relative;margin: 0px auto;display: inline-block;padding: 5px;">
+	      		<img id="delete_record" src="https://boorde.com/assets/images/cancel-open-trades.jpg"  alt="" class="img-fluid mb-4 mb-lg-0">
+	      	</div>
+        </center>					      	
+        <div>This will confirm all open trades. Confirm?</div>
+      </div>
+      <div class="modal-footer">
+
+ 		<table class="table table-borderless">
+			<tr>
+				<td scope="row"class="text-left">
+					<center><button class="btn" data-dismiss="modal">Do not cancel</button></center>
+				</td>
+				<td scope="row"class="text-right">
+					<center><button id="confirmCancelBtn" data-toggle="modal" class="btn btn-warning">Confirm Action</button></center>
+				</td>
+			</tr>	
+ 		</table>
+
+      	<!--
+      	<input type="button" value="Cancel" class="primary" data-dismiss="modal"/>
+        <input type="button" id="delete" value="Delete" class="primary float-right" style="background-color: #7765e6;" data-dismiss="modal"/> 			        
+		-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="donationModalLabel">Donate XRP to the address below</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      	<center>
+	      	<div style="text-align: center;position: relative;margin: 0px auto;display: inline-block;padding: 5px;">
+	      		<img id="delete_record" src="https://boorde.com/assets/images/rEb8TK3gBgk5auZkwc6sHnwrGVJH8DuaLh.png"  alt="" class="img-fluid mb-4 mb-lg-0">
+	      	</div>
+        </center>					      	
+
+		  <div class="form-group">
+		    <label for="wallet">XRP Wallet Address</label>
+		    <input type="text" class="form-control" id="wallet" value="rEb8TK3gBgk5auZkwc6sHnwrGVJH8DuaLh" readonly="true">
+		  </div>
+
+		  <div class="form-group">
+		    <label for="destination">Destination Tag</label>
+		    <input type="text" class="form-control" id="destination" value="102812603" readonly="true">
+		  </div>
+
+      </div>
+      <div class="modal-footer">
+
+		<button class="btn" data-dismiss="modal">Close</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- The actual snackbar -->
+<div id="snackbar">Record Updated</div>
+
+</div>  <!-- wrapper ends -->
+
+	</body>
+
+</html>

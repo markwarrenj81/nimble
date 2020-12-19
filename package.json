@@ -1,0 +1,21 @@
+{
+  "name": "xrpl-bot",
+  "version": "1.0.0",
+  "description": "A live working sample can be found here: http://computercowboy.tech/",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "node-binance-api": "^0.12.2",
+    "read-last-lines": "^1.7.1",
+    "request": "^2.88.0",
+    "ripple-lib": "^1.6.0",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
