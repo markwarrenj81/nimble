@@ -25,7 +25,9 @@ Bot Installation Steps
 1. Download and extract the files to your working folder (Linux User): eg : /var/www/html/nimble
 2. From your terminal, go the the folder where you have extracted all the files and folders.
 3. Install NodesJS by typing on you terminal :
-   $ sudo apt install nodejs
+$ sudo apt install nodejs
 4. Next you need to install Node Package Manager(NPM) with Node.js. NPM is an open source library of Node.js packages. To install NPM, use the following commands: 
-   $ sudo apt install npm
-5.
+$ sudo apt install npm
+5. To ensure you have the latest version, update you version by typing the following command on your terminal :
+$ sudo apt-get update
+$ sudo apt-get upgrade
