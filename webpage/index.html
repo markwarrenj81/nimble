@@ -196,14 +196,42 @@
 				socket.on('emit', function(msg)
 				{
 					
-					if(isEmptyOrSpaces(msg))return;	
+					if(isEmptyOrSpaces(msg))return;
 
-					let notes ="<div class='alert alert-secondary' role='alert'>" + msg + "</div>"; 
+						var arrText = msg.split(" ][ ");
+						var arrDetails = arrText[1].split(" ]: ");
+						
+						var msgDate = arrText[0].replace("[ ", "");
+						var msgTime = arrDetails[0]
+						var details = arrDetails[1];
+
+						var timeStamp = msgDate + " " + msgTime;
+
+						/*
+						console.log('msgDate : [' + msgDate + "]");
+						console.log('msgTime : [' + msgTime + "]");
+						console.log('details : ' + details);
+						*/
+
+
+						//let notes ="<div class='alert alert-secondary' role='alert'>" + msg + "</div>";
+
+						let notes ="<div class='alert alert-secondary' role='alert'><h4 class='alert-heading'>"+details+"</h4><p>"+timeStamp+"</p></div>";
+
+						/*
+								<div class="alert alert-success" role="alert">
+								  <h4 class="alert-heading">Well done!</h4>
+								  <p>Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.</p>
+								  <hr>
+								  <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>
+								</div>
+						*/ 
 
 					if(msg == "We sold XRP!")
 					{
 						
-						notes ="<div class='alert alert-success' role='alert'>" + msg + "</div>"; 
+						//notes ="<div class='alert alert-success' role='alert'>" + msg + "</div>"; 
+						let notes ="<div class='alert alert-success' role='alert'><h4 class='alert-heading'>"+details+"</h4><p>"+timeStamp+"</p></div>";
 						$('#messages').append(notes);
 						
 						//$('#messages').append($('<li style="color:green;">').text(msg));
@@ -215,7 +243,8 @@
 					else if(msg == "We bought XRP!") 
 					{
 						
-						notes ="<div class='alert alert-danger' role='alert'>" + msg + "</div>"; 
+						//notes ="<div class='alert alert-danger' role='alert'>" + msg + "</div>"; 
+						let notes ="<div class='alert alert-danger' role='alert'><h4 class='alert-heading'>"+details+"</h4><p>"+timeStamp+"</p></div>";
 						$('#messages').append(notes);
 						//$('#messages').append($('<li style="color:red;">').text(msg));
 						beep();
@@ -224,21 +253,7 @@
 						displaySnackbar();	
 					}
 					else if(msg.charAt(0) == '[')
-					{
-						
-						var arrText = msg.split(" ][ ");
-						var arrDetails = arrText[1].split(" ]: ");
-						
-						var msgDate = arrText[0].replace("[ ", "");
-						var msgTime = arrDetails[0]
-						var details = arrDetails[1];
-
-						/*
-						console.log('msgDate : [' + msgDate + "]");
-						console.log('msgTime : [' + msgTime + "]");
-						console.log('details : ' + details);
-						*/
-						
+					{												
 						//$('#messages').append($('<li style="color:grey;">').text(notes));
 						$('#messages').append(notes);
 					}
