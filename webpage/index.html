@@ -211,12 +211,22 @@
 						console.log('msgDate : [' + msgDate + "]");
 						console.log('msgTime : [' + msgTime + "]");
 						console.log('details : ' + details);
+						
 						*/
+						let buyMsg = "Placing an order to buy";
+						let buySell = "Placing an order to sell";
 
+						var alert = "secondary";
 
-						//let notes ="<div class='alert alert-secondary' role='alert'>" + msg + "</div>";
+						if(details.includes(buyMsg)){
+							alert = "danger";
+						}else if(details.includes(buySell)){
+							alert = "success";
+						}else{
+							alert = "secondary";
+						}
 
-						let notes ="<div class='alert alert-secondary' role='alert'><h5 class='alert-heading'>"+details+"</h5><p>"+timeStamp+"</p></div>";
+						let notes ="<div class='alert alert-" + alert + "' role='alert'><h5 class='alert-heading'>"+details+"</h5><p>"+timeStamp+"</p></div>";
 
 						/*
 								<div class="alert alert-success" role="alert">
@@ -230,8 +240,7 @@
 					if(msg == "We sold XRP!")
 					{
 						
-						//notes ="<div class='alert alert-success' role='alert'>" + msg + "</div>"; 
-						let notes ="<div class='alert alert-success' role='alert'><h5 class='alert-heading'>"+details+"</h5><p>"+timeStamp+"</p></div>";
+						let notes ="<div class='alert alert-" + alert + "' role='alert'><h5 class='alert-heading'>"+details+"</h5><p>"+timeStamp+"</p></div>";
 						$('#messages').append(notes);
 						
 						//$('#messages').append($('<li style="color:green;">').text(msg));
@@ -243,8 +252,7 @@
 					else if(msg == "We bought XRP!") 
 					{
 						
-						//notes ="<div class='alert alert-danger' role='alert'>" + msg + "</div>"; 
-						let notes ="<div class='alert alert-danger' role='alert'><h5 class='alert-heading'>"+details+"</h5><p>"+timeStamp+"</p></div>";
+						let notes ="<div class='alert alert-" + alert + "' role='alert'><h5 class='alert-heading'>"+details+"</h5><p>"+timeStamp+"</p></div>";
 						$('#messages').append(notes);
 						//$('#messages').append($('<li style="color:red;">').text(msg));
 						beep();
@@ -940,8 +948,8 @@
 	  </div>
       <div class="list-group list-group-flush">
         <a href="#home" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-        <a href="#notification" class="list-group-item list-group-item-action bg-light">Notifications</a>
         <a href="#performance" class="list-group-item list-group-item-action bg-light">Performance</a>
+        <a href="#notification" class="list-group-item list-group-item-action bg-light">Notifications</a>
         <a href="#settings" class="list-group-item list-group-item-action bg-light">Settings</a>
         <a href="#about" class="list-group-item list-group-item-action bg-light">About</a>
         <!--
@@ -1491,9 +1499,9 @@
       <div class="col-lg-5 px-5 mx-auto"><img src="https://boorde.com/assets/images/feedback.png" alt="" class="img-fluid mb-4 mb-lg-0"></div>
       <div class="col-lg-6"><i class="fa fa-exclamation-circle fa-2x mb-3 text-primary"></i>
         <h2 class="font-weight-light">Use at your own risk</h2>
-        <p class="font-italic text-muted mb-4">Trading cryptocurrency is a very risky activity. Please make sure you have done your own research and use this tool at your own risk. This bot is intended as assist developers and investors to learn using a trading bot using available APIs.</p>
+        <p class="font-italic text-muted mb-4">Trading cryptocurrency is a very risky activity. Please make sure you have done your own research and use this tool at your own risk. This bot is intended as assist developers and investors to learn using a trading bot from the available APIs in this case, the Binance Exchange.</p>
         <p>Will extend more features for Nimble in the future as I get some feedbacks of its usage.</p>
-        <p><a id="donateLink" href="#" class="btn btn-primary px-5 rounded-pill shadow-sm">Donate to this project</a></p>
+        <p><center><a id="donateLink" href="#" class="btn btn-primary px-5 rounded-pill shadow-sm">Donate to this project</a></center></p>
         <br>
         <h2 class="font-weight-light">Developer Contact</h2>
         <p>
