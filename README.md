@@ -65,7 +65,7 @@ $ npm i node-binance-api
 $ node [path-of-bot]/nimble/index.js
 
 
-Once you bot is up and running, you can access it at :
+Once you bot is up and running, you can access it using a web browser (Chrome) at :
 
 http://localhost:3000
 
