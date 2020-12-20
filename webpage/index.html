@@ -214,14 +214,24 @@
 						
 						*/
 						let buyMsg = "Placing an order to buy";
-						let buySell = "Placing an order to sell";
+						let sellMsg = "Placing an order to sell";
+
+						let buyOpen = "opened to BUY";
+						let sellOpen = "opened to SELL";
+						
+						let orderCancel = "Cancelling outstanding orders";
+						let idleStat = "We havent detected a trade in a while now";
 
 						var alert = "secondary";
 
-						if(details.includes(buyMsg)){
+						if(details.includes(buyMsg) || details.includes(buyOpen)){
 							alert = "danger";
-						}else if(details.includes(buySell)){
+						}else if(details.includes(sellMsg) || details.includes(sellOpen)){
 							alert = "success";
+						}else if(details.includes(idleStat)){
+							alert = "warning";
+						}else if(details.includes(orderCancel)){
+							alert = "warning";
 						}else{
 							alert = "secondary";
 						}
