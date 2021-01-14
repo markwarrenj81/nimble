@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>
-			nimble xrpl-bot
+			nimble {xrpl-bot}
 		</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
@@ -414,6 +414,7 @@
 						color = rgbToHex(color);
 						color = "#00" + color + "00";
 						$("#currentPriceDiv").css('color', (color));
+						$("#currentXRPprice").css('color', (color));
 						
 						
 					}
@@ -428,10 +429,12 @@
 						//$('#messages').append($('<li>').text(color));
 						
 						$("#currentPriceDiv").css('color', (color));
+						$("#currentXRPprice").css('color', (color));
 					}
 					else
 					{
 						$("#currentPriceDiv").css('color', 'black');
+						$("#currentXRPprice").css('color', 'black');
 					}
 				});
 				
@@ -500,6 +503,7 @@
 						color = rgbToHex(color);
 						color = "#00" + color + "00";
 						$("#currentPriceDiv").css('color', (color));
+						$("#currentXRPprice").css('color', (color));
 						
 						
 					}
@@ -519,10 +523,12 @@
 						//$('#messages').append($('<li>').text(color));
 						
 						$("#currentPriceDiv").css('color', (color));
+						$("#currentXRPprice").css('color', (color));
 					}
 					else
 					{
 						$("#currentPriceDiv").css('color', 'black');
+						$("#currentXRPprice").css('color', 'black');
 					}
 
 
@@ -555,6 +561,22 @@
 					netWorth = parseFloat(marketValue) + parseFloat(USD) + parseFloat(reserve) + (parseFloat(reserveXRP) * parseFloat(pricePerShare)) + parseFloat(buyTradeVal) + parseFloat(sellTradeVal);
 				
 					currentPriceDiv.innerHTML = "<h2>" + "$" +  pricePerShare.toFixed(5) + "</h2>";
+
+
+					// **** XRP LIVE STAT TABLE [start] ********* //
+
+					currentXRPprice.innerHTML = pricePerShare.toFixed(5);
+
+					let currentUSDT = (parseFloat(totalUSD) + parseFloat(buyTradeVal)).toFixed(2);
+					let curentUSDTinXRP = currentUSDT / pricePerShare; 
+					let XRPCurrentTotal = (parseFloat(totalXRP) + parseFloat(curentUSDTinXRP)).toFixed(2);
+					let XRPCurrentValue = (parseFloat(XRPCurrentTotal)*parseFloat(pricePerShare)).toFixed(2);
+
+					currentXRPamt.innerHTML = XRPCurrentTotal; 
+
+					currentXRPval.innerHTML = "$" + XRPCurrentValue;
+
+					// **** XRP LIVE STAT TABLE [end] ********* //
 					
 					netWorthDiv.innerHTML = "$" +  netWorth.toFixed(2);
 					
@@ -572,9 +594,7 @@
 	
 					var transactionsPerDay = (totalTransactions / hours).toFixed(2);
 					transactionsPerDayDiv.innerHTML = transactionsPerDay;
-					
-					
-					
+										
 					//getBTC();
 					//***********************************************************			
 
@@ -673,7 +693,9 @@
 				socket.on('startPrice', function(msg)
 				{
 					startPrice = msg;
-					startPriceDiv.innerHTML = "*Startup : 1 XRP ~ $" + msg;
+					
+					startupXRPprice.innerHTML = msg;
+
 					setPrice.value = msg;
 
 					
@@ -704,6 +726,17 @@
 					startupCapital = xrpForTradeSum + amtUSDTSum;
 
 					startupCapitalVal.innerHTML = "$" + startupCapital.toFixed(2);
+
+					let USDTinXRP = amtUSDT.value / startupXRPprice.innerHTML; 
+
+					let XRPStartupTotal = (parseFloat(amtXRP.value) + parseFloat(USDTinXRP)).toFixed(2);
+
+					let XRPStartupValue = (parseFloat(XRPStartupTotal)*parseFloat(startupXRPprice.innerHTML)).toFixed(2);
+
+					startupXRPamt.innerHTML = XRPStartupTotal;
+
+					startupXRPval.innerHTML = "$" + XRPStartupValue;
+
 				});
 
 				socket.on('configUpdates', function(msg)
@@ -1012,7 +1045,7 @@
 
       	<div id="dashboard" class="content-section">
 
-		<h2 class="mt-4">xrpl-bot {binance}</h2>
+		<h2 class="mt-4">nimble@xrpl-bot</h2>
 
 			Mean reversion algorithm.
 			<br>
@@ -1100,7 +1133,6 @@
 
 			<div class="table-responsive-md">
 			<table class="table">
-			  <caption><span id="startPriceDiv"></span></caption>	
 			  <thead class="thead-light">
 			    <tr>
 			      <th scope="col"></th>
@@ -1238,6 +1270,65 @@
 			  </thead>
 			</table>
 			</div>
+
+			<br>
+
+			<div class="table-responsive-md">
+			<table class="table">
+			  <caption>*estimated XRP on full USDT-to-XRP purchase</caption>
+			  <thead class="thead-light">
+			    <tr>
+			      <th scope="col" style="background-color: #61675f;color:#ffffff;"></th>
+			      <th scope="col" style="background-color: #61675f;color:#ffffff;"><center>XRP Price</center></th>
+			      <th scope="col" style="background-color: #61675f;color:#ffffff;"><center>Total XRP</center></th>
+			      <th scope="col" style="background-color: #61675f;color:#ffffff;"><center>Value</center></th>
+			    </tr>
+			  </thead>
+
+			  <tbody>
+			    <tr>
+			      <th scope="row" title="Startup: The total amount of XRP and Value during bot activation">Startup</th>
+			      <th title="XRP Price when bot was activated.">
+					<div id="startupXRPprice" class="text-center">
+						0.00000
+					</div>
+			      </th>
+			      <th title="XRP total amount during starup">
+					<div id="startupXRPamt" class="text-right">
+						0
+					</div>
+			      </th>
+			      <th title="XRP total asset value during starup">
+					<div id="startupXRPval" class="text-right">
+						0.00
+					</div>      	
+			      </th>
+			    </tr>
+			 </tbody>
+
+			 <thead class="thead-light">
+			    <tr>
+			      <th scope="row" title="Startup: Current total amount of XRP and Value">Current</th>
+			      <th title="XRP Current Price.">
+					<div id="currentXRPprice" class="text-center">
+						0.00000
+					</div>
+			      </th>
+			      <th title="XRP Current total amount">
+					<div id="currentXRPamt" class="text-right">
+						0
+					</div>
+			      </th>
+			      <th title="XRP Current total asset value">
+					<div id="currentXRPval" class="text-right">
+						0.00
+					</div>      	
+			      </th>
+			    </tr>
+			 </tbody>
+
+			</table>
+			</div>				
 			
 			<br>	
    		
@@ -1628,3 +1719,4 @@
 	</body>
 
 </html>
+
