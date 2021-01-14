@@ -643,6 +643,15 @@
 					daysUntilHundredDiv.innerHTML = timeUntilGoal(100000, netWorth);
 					daysUntilMillionDiv.innerHTML = timeUntilGoal(1000000, netWorth);
 					//-------------------
+					
+					if(parseFloat(profit) < 0.00){
+						$("#currentEarnings").css('color', 'red');
+					}else{
+						$("#currentEarnings").css('color', 'green');
+					}					
+
+					currentEarnings.innerHTML = profitDiv.innerHTML + " (" + profitPercentageDiv.innerHTML + ")";					
+					
 				});
 				
 				socket.on('userCount', function(msg)
@@ -1275,7 +1284,7 @@
 
 			<div class="table-responsive-md">
 			<table class="table">
-			  <caption>*estimated XRP on full USDT-to-XRP purchase</caption>
+			  <caption class="text-right" style="margin-right: 10px;">earnings :&nbsp;<span id="currentEarnings">[earnings]</span></caption>
 			  <thead class="thead-light">
 			    <tr>
 			      <th scope="col" style="background-color: #61675f;color:#ffffff;"></th>
